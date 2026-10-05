@@ -5,7 +5,7 @@
     "types": [
       "node"
     ],
-    "module": "es6",
+    "module": "NodeNext",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -14,6 +14,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx"
   }
 }
