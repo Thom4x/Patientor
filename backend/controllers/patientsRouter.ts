@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import express, { type Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import getService from '../services/patientService.ts';
-import type { DiagnosticPatient, nonSensitiveContent } from '../types/type.ts';
-import newPatientValidator from '../utils/middleware.ts';
+import type { DiagnosticPatient, nonSensitiveContent, PatientEntry, NewPatientEntry } from '../types/type.ts';
+import { newPatientParser, errorMiddleware } from '../utils/middleware.ts';
 
 const patientsRouter = express.Router();
 
@@ -16,22 +15,12 @@ patientsRouter.get('/patients', (_req, res: Response<nonSensitiveContent[]>) => 
     res.send(data);
 });
 
-patientsRouter.post('/patients', (req, res) => {
-    console.log('ESTO TENEMOS', req.body);
+patientsRouter.post('/patients', newPatientParser, (req: Request<unknown, unknown, NewPatientEntry>, res: Response<PatientEntry>) => {
+    const addedPatient = getService.postPatients(req.body);
+    res.send(addedPatient);
 
-    try {
-        console.log('ESTO TENEMOS', req.body);
-        const validatedNewPatient = newPatientValidator(req.body);
-        const addedPatient = getService.postPatients(validatedNewPatient);
-        res.send(addedPatient);
-    } catch (error) {
-        let errorMessage: string = '';
-        if (error instanceof Error) {
-            errorMessage += error.message;
-        }
-        res.status(400).send(errorMessage);
-    }
 });
 
+patientsRouter.use(errorMiddleware);
 
 export default patientsRouter;

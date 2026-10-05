@@ -40,7 +40,15 @@ const patientData: Patient[] = [
         "ssn": "090471-8890",
         "gender": "male",
         "occupation": "Digital evangelist"
+    },
+    {
+        "id": "c12f9040-9266-4b33-bb02-00b4538e993f",
+        "name": "John zzzz",
+        "dateOfBirth": "1986-07-09",
+        "gender": "male",
+        "occupation": "New york city cop",
+        "ssn": "090786-122X"
     }
 ];
 
-export default patientData;    
+export default patientData;
