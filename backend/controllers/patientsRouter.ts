@@ -2,6 +2,7 @@
 import express, { type Response } from 'express';
 import getService from '../services/patientService.ts';
 import type { DiagnosticPatient, nonSensitiveContent } from '../types/type.ts';
+import newPatientValidator from '../utils/middleware.ts';
 
 const patientsRouter = express.Router();
 
@@ -15,18 +16,21 @@ patientsRouter.get('/patients', (_req, res: Response<nonSensitiveContent[]>) => 
     res.send(data);
 });
 
-patientsRouter.post('/patients', (req, res: Response<nonSensitiveContent>) => {
-    const { name, dateOfBirth, gender, occupation, ssn } = req.body;
-    const newData = getService.postPatients({
-        name,
-        dateOfBirth,
-        gender,
-        occupation,
-        ssn,
-    });
-    //getService.postPatients(newData);
-    //console.log('newData', newData);
-    res.send(newData);
+patientsRouter.post('/patients', (req, res) => {
+    console.log('ESTO TENEMOS', req.body);
+
+    try {
+        console.log('ESTO TENEMOS', req.body);
+        const validatedNewPatient = newPatientValidator(req.body);
+        const addedPatient = getService.postPatients(validatedNewPatient);
+        res.send(addedPatient);
+    } catch (error) {
+        let errorMessage: string = '';
+        if (error instanceof Error) {
+            errorMessage += error.message;
+        }
+        res.status(400).send(errorMessage);
+    }
 });
 
 
