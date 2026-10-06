@@ -11,7 +11,7 @@ app.use(morgan('dev'));
 app.use('/api', PingRouter);
 app.use('/api', patientsRouter);
 
-const PORT = 3000;
+const PORT = 3001;
 
 
 app.listen(PORT, () => {

@@ -1,15 +1,16 @@
 import diagnosisList from '../data/diagnoses.ts';
 import patientData from '../data/patients.ts';
-import type { DiagnosticPatient, nonSensitiveContent, Patient, NewPatientEntry } from '../types/type.ts';
+import type { Diagnosis, NonSensitivePatient, Patient, NewPatientEntry } from '../types/type.ts';
 import { v4 as uuidv4 } from 'uuid';
 
 const patients = patientData;
 
-const getDiagnosis = (): DiagnosticPatient[] => {
+const getDiagnosis = (): Diagnosis[] => {
     return diagnosisList;
 };
 
-const getPatientsNonSensitive = (): nonSensitiveContent[] => {
+const getPatientsNonSensitive = (): NonSensitivePatient[] => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const nonSensitiveData = patients.map(({ ssn, ...patientData }) => patientData);
     return nonSensitiveData;
 };

@@ -1,0 +1,21 @@
+{
+  "name": "patientor-api-tests",
+  "version": "1.0.0",
+  "description": "API tests for patientor backend",
+  "scripts": {
+    "test": "playwright test --config tests/playwright.config.ts",
+    "test:ui": "playwright test --ui --config tests/playwright.config.ts",
+    "test:headed": "playwright test --headed --config tests/playwright.config.ts",
+    "report": "playwright show-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.19.43"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.5"
+  }
+}

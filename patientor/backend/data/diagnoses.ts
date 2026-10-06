@@ -1,4 +1,6 @@
-[
+import type { Diagnosis } from '../types/type.ts';
+
+const diagnosisList: Diagnosis[] = [
     {
         "code": "M24.2",
         "name": "Disorder of ligament",
@@ -72,4 +74,6 @@
         "name": "Other proliferative retinopathy",
         "latin": "Alia retinopathia proliferativa"
     }
-]
+];
+
+export default diagnosisList;
