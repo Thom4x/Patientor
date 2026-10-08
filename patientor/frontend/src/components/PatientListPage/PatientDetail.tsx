@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Patient, UserId } from '../../types';
+import { Diagnosis, Patient, UserId } from '../../types';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -10,15 +10,17 @@ import patientService from "../../services/patients";
 
 const PatientDetail = () => {
     const [patients, setPatients] = useState<Patient | null>(null);
+    const [diagnosis, setDiagnosis] = useState<Diagnosis[]>([]);
     const { id } = useParams<{ id: UserId }>();
 
-    console.log("estamos con estos datos", patients);
     useEffect(() => {
         const fetchPatientList = async () => {
             if (id) {
-                const patients = await patientService.getById(id as UserId);
-                setPatients(patients);
+                const patient = await patientService.getById(id);
+                setPatients(patient);
             }
+            const diagnosisList = await patientService.getDiagnosis();
+            setDiagnosis(diagnosisList);
         };
         void fetchPatientList();
     }, [id]);
@@ -45,9 +47,17 @@ const PatientDetail = () => {
                                 <div key={value.id}>
                                     <Typography variant="body1">{value.date} <i>{value.description}</i></Typography>
                                     <ul>
-                                        {value.diagnosisCodes?.map(item =>
-                                            <li><Typography variant='body1'>{item}</Typography></li>
-                                        )}
+                                        {value.diagnosisCodes?.map((item) => {
+                                            const matchDiagnosis = diagnosis.find(dn => dn.code === item);
+
+                                            return matchDiagnosis ? (
+                                                <li key={item}>
+                                                    <Typography>
+                                                        {matchDiagnosis.code} {matchDiagnosis.name}
+                                                    </Typography>
+                                                </li>
+                                            ) : null;
+                                        })}
                                     </ul>
                                 </div>
                             )
@@ -58,7 +68,8 @@ const PatientDetail = () => {
                 </Box>
             ) : (
                 <h1><Typography variant="body1">Cargando...</Typography></h1>
-            )}
+            )
+            }
         </div >
     );
 };

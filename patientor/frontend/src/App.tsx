@@ -22,7 +22,6 @@ const App = () => {
     };
     void fetchPatientList();
   }, []);
-  console.log("patients", patients);
   return (
     <div className="App">
       <Router>

@@ -1,10 +1,19 @@
+export interface Diagnosis {
+    code: string;
+    name: string;
+    latin?: string;
+}
+
+
 interface BaseEntry {
     id: string;
     description: string;
     date: string;
     specialist: string;
-    diagnosisCodes?: Array<Diagnosis['code']>;
+    diagnosisCodes?: Array<Diagnosis['code']>
 }
+
+
 
 const HealthCheckRating = {
     Healthy: 0,
@@ -70,8 +79,3 @@ export interface Patient extends PatientEntry {
 
 export type NonSensitivePatient = Omit<Patient, "ssn">;
 
-export interface Diagnosis {
-    code: string;
-    name: string;
-    latin?: string;
-}

@@ -10,7 +10,7 @@ const idSchema = z.object({
 
 const patientsRouter = express.Router();
 
-patientsRouter.get('/diagnoses', (_req, res: Response<Diagnosis[]>) => {
+patientsRouter.get('/diagnosis', (_req, res: Response<Diagnosis[]>) => {
     const data = getService.getDiagnosis();
     res.send(data);
 });
