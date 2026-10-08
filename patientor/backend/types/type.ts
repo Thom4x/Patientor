@@ -1,17 +1,20 @@
 import { z } from 'zod';
 
-// 1. Array constante: Usamos camelCase. 
 const genderOptions = ["male", "female", "other"] as const;
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export const EntrySchema = z.object({});
 
 export const NewPatientSchema = z.object({
     name: z.string(),
     dateOfBirth: z.string().date(),
     ssn: z.string(),
     gender: z.enum(genderOptions),
-    occupation: z.string()
+    occupation: z.string(),
+    entries: z.array(EntrySchema)
 });
 
-// 3. Tipos inferidos (PascalCase)
+// Tipos inferidos 
 export type NewPatientEntry = z.infer<typeof NewPatientSchema>;
 export type Gender = z.infer<typeof NewPatientSchema.shape.gender>;
 

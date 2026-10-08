@@ -9,16 +9,17 @@ const getDiagnosis = (): Diagnosis[] => {
     return diagnosisList;
 };
 
+const getOnlyPatient = (id: string): Patient | undefined => {
+    const patientFind = patients.find(pt => pt.id === id);
+    return patientFind;
+};
+
+
 const getPatientsNonSensitive = (): NonSensitivePatient[] => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const nonSensitiveData = patients.map(({ ssn, ...patientData }) => patientData);
     return nonSensitiveData;
 };
-
-// const getById = (id: string): Patient | undefined => {
-//     const mappedData = patientData.find(u => u.id === id);
-//     return mappedData;
-// };
 
 const postPatients = (args: NewPatientEntry): Patient => {
     const randomId = uuidv4();
@@ -33,6 +34,7 @@ const postPatients = (args: NewPatientEntry): Patient => {
 
 export default {
     getDiagnosis,
+    getOnlyPatient,
     getPatientsNonSensitive,
     postPatients
 };
