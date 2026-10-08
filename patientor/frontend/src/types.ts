@@ -1,3 +1,7 @@
+export interface UserId {
+  id: string;
+}
+
 export interface Diagnosis {
   code: string;
   name: string;

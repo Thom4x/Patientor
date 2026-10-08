@@ -14,6 +14,10 @@ const getOnlyPatient = (id: string): Patient | undefined => {
     return patientFind;
 };
 
+const getNormalPatients = (): Patient[] => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return patients;
+};
 
 const getPatientsNonSensitive = (): NonSensitivePatient[] => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,5 +40,6 @@ export default {
     getDiagnosis,
     getOnlyPatient,
     getPatientsNonSensitive,
-    postPatients
+    postPatients,
+    getNormalPatients
 };
