@@ -12,11 +12,10 @@ const PatientDetail = () => {
     const [patients, setPatients] = useState<Patient | null>(null);
     const { id } = useParams<{ id: UserId }>();
 
-
+    console.log("estamos con estos datos", patients);
     useEffect(() => {
         const fetchPatientList = async () => {
             if (id) {
-                //const clean = id.replace(/[^a-zA-Z0-9-]/g, '');
                 const patients = await patientService.getById(id as UserId);
                 setPatients(patients);
             }
@@ -38,6 +37,24 @@ const PatientDetail = () => {
                     <Typography variant="body1">ssn: {patients.ssn}</Typography>
                     <Typography variant="body1">occupation: {patients.occupation}</Typography>
                     <Typography variant="body1">date of birth: {patients.dateOfBirth}</Typography>
+                    <br />
+                    <Typography variant="h6">entries</Typography>
+                    {
+                        patients.entries.length >= 1 ? (
+                            patients.entries.map((value) =>
+                                <div key={value.id}>
+                                    <Typography variant="body1">{value.date} <i>{value.description}</i></Typography>
+                                    <ul>
+                                        {value.diagnosisCodes?.map(item =>
+                                            <li><Typography variant='body1'>{item}</Typography></li>
+                                        )}
+                                    </ul>
+                                </div>
+                            )
+                        ) : (
+                            <Typography variant="body1">No entries</Typography>
+                        )
+                    }
                 </Box>
             ) : (
                 <h1><Typography variant="body1">Cargando...</Typography></h1>

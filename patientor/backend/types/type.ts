@@ -57,7 +57,7 @@ export interface PatientEntry {
     ssn: string;
     gender: genderOption;
     occupation: string;
-    entries: Entry[];
+    entries?: Entry[];
 }
 
 // Tipos inferidos 
