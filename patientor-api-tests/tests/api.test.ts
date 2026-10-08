@@ -73,6 +73,7 @@ test.describe('Patientor API', () => {
         ssn: '010190-1234',
         gender: 'male',
         occupation: 'Developer',
+        entries: []
       };
 
       const response = await request.post('/api/patients', {
@@ -89,6 +90,7 @@ test.describe('Patientor API', () => {
       expect(body).toHaveProperty('ssn', newPatient.ssn);
       expect(body).toHaveProperty('gender', newPatient.gender);
       expect(body).toHaveProperty('occupation', newPatient.occupation);
+      expect(body).toHaveProperty('entries', newPatient.entries);
     });
 
     test('should return 400 for missing required fields', async ({ request }) => {
