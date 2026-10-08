@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from 'express';
 import getService from '../services/patientService.ts';
-import type { Diagnosis, NonSensitivePatient, Patient, NewPatientEntry } from '../types/type.ts';
-import { newPatientParser, errorMiddleware } from '../utils/middleware.ts';
+import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry } from '../types/type.ts';
+import { newPatientValidator } from '../utils/middleware.ts';
 import { z } from 'zod';
 
 const idSchema = z.object({
@@ -15,7 +15,7 @@ patientsRouter.get('/diagnoses', (_req, res: Response<Diagnosis[]>) => {
     res.send(data);
 });
 
-patientsRouter.get('/patients/:id', (req: Request, res: Response) => {
+patientsRouter.get('/patients/:id', (req: Request, res: Response<Patient | { error: string }>) => {
 
     const { id } = idSchema.parse(req.params);
     const patientById = getService.getOnlyPatient(id);
@@ -32,12 +32,9 @@ patientsRouter.get('/patients', (_req, res: Response<NonSensitivePatient[]>) => 
     res.send(data);
 });
 
-patientsRouter.post('/patients', newPatientParser, (req: Request<unknown, unknown, NewPatientEntry>, res: Response<Patient>) => {
+patientsRouter.post('/patients', newPatientValidator, (req: Request<unknown, unknown, PatientEntry>, res: Response<Patient>) => {
     const addedPatient = getService.postPatients(req.body);
     res.send(addedPatient);
-
 });
-
-patientsRouter.use(errorMiddleware);
 
 export default patientsRouter;

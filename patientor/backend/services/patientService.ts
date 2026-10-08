@@ -1,6 +1,6 @@
 import diagnosisList from '../data/diagnoses.ts';
 import patientData from '../data/patients.ts';
-import type { Diagnosis, NonSensitivePatient, Patient, NewPatientEntry } from '../types/type.ts';
+import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry } from '../types/type.ts';
 import { v4 as uuidv4 } from 'uuid';
 
 const patients = patientData;
@@ -15,7 +15,6 @@ const getOnlyPatient = (id: string): Patient | undefined => {
 };
 
 const getNormalPatients = (): Patient[] => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return patients;
 };
 
@@ -25,7 +24,7 @@ const getPatientsNonSensitive = (): NonSensitivePatient[] => {
     return nonSensitiveData;
 };
 
-const postPatients = (args: NewPatientEntry): Patient => {
+const postPatients = (args: PatientEntry): Patient => {
     const randomId = uuidv4();
     const newPatientEntry: Patient = {
         id: randomId,
