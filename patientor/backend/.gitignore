@@ -2,4 +2,5 @@ node_modules
 
 # Old Filres
 oldMiddleware.ts
+oltypes.ts
 hola.tsx

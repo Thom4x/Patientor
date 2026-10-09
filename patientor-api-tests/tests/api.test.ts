@@ -13,9 +13,9 @@ test.describe('Patientor API', () => {
     });
   });
 
-  test.describe('GET /api/diagnoses', () => {
+  test.describe('GET /api/diagnosis', () => {
     test('should return an array of diagnoses', async ({ request }) => {
-      const response = await request.get('/api/diagnoses');
+      const response = await request.get('/api/diagnosis');
 
       expect(response.ok()).toBeTruthy();
       expect(response.status()).toBe(200);
@@ -26,7 +26,7 @@ test.describe('Patientor API', () => {
     });
 
     test('each diagnosis should have code and name fields', async ({ request }) => {
-      const response = await request.get('/api/diagnoses');
+      const response = await request.get('/api/diagnosis');
       const body = await response.json();
 
       for (const diagnosis of body) {
@@ -73,7 +73,14 @@ test.describe('Patientor API', () => {
         ssn: '010190-1234',
         gender: 'male',
         occupation: 'Developer',
-        entries: []
+        entries: [{
+          id: 'entry1',
+          date: '2023-01-01',
+          type: 'HealthCheck',
+          specialist: 'Dr. Smith',
+          description: 'Routine check-up',
+          healthCheckRating: 0
+        }]
       };
 
       const response = await request.post('/api/patients', {

@@ -11,6 +11,7 @@ import EntryDetails from '../EntryDetails/EntryDetails';
 
 const PatientDetail = () => {
     const [patients, setPatients] = useState<Patient | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [diagnosis, setDiagnosis] = useState<Diagnosis[]>([]);
     const { id } = useParams<{ id: UserId }>();
 

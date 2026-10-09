@@ -1,6 +1,6 @@
 import diagnosisList from '../data/diagnoses.ts';
 import patientData from '../data/patients.ts';
-import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry } from '../types/type.ts';
+import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry, EntryWithoutId } from '../types/type.ts';
 import { v4 as uuidv4 } from 'uuid';
 
 const patients = patientData;
@@ -13,6 +13,24 @@ const getOnlyPatient = (id: string): Patient | undefined => {
     const patientFind = patients.find(pt => pt.id === id);
     return patientFind;
 };
+
+const postByIdEntryes = (id: string, object: EntryWithoutId): Patient | undefined => {
+    const patientFind = patients.find(pt => pt.id === id);
+    if (!patientFind) {
+        return undefined;
+    }
+
+    const newEntry = {
+        id: uuidv4(),
+        ...object
+    };
+    if (!patientFind.entries) {
+        patientFind.entries = [];
+    }
+    patientFind.entries.push(newEntry);
+    return patientFind;
+};
+
 
 const getNormalPatients = (): Patient[] => {
     return patients;
@@ -40,5 +58,6 @@ export default {
     getOnlyPatient,
     getPatientsNonSensitive,
     postPatients,
-    getNormalPatients
+    getNormalPatients,
+    postByIdEntryes
 };

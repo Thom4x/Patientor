@@ -1,7 +1,7 @@
 import express, { type Request, type Response } from 'express';
 import getService from '../services/patientService.ts';
-import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry } from '../types/type.ts';
-import { newPatientValidator } from '../utils/middleware.ts';
+import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry, EntryWithoutId } from '../types/type.ts';
+import { newEntriesValidator, newPatientValidator } from '../utils/middleware.ts';
 import { z } from 'zod';
 
 const idSchema = z.object({
@@ -25,6 +25,13 @@ patientsRouter.get('/patients/:id', (req: Request, res: Response<Patient | { err
     } else {
         res.status(404).send({ error: 'Patient not found' });
     }
+});
+
+patientsRouter.post('/patients/:id/entries', newEntriesValidator, (req: Request<unknown, unknown, EntryWithoutId>, res: Response<Patient | { error: string }>) => {
+    const { id } = idSchema.parse(req.params);
+    const addedPatient = getService.postByIdEntryes(id, req.body);
+    res.send(addedPatient);
+
 });
 
 patientsRouter.get('/patients', (_req, res: Response<NonSensitivePatient[]>) => {
