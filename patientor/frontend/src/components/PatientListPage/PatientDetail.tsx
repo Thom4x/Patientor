@@ -7,6 +7,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 import { Box, Typography } from '@mui/material';
 
 import patientService from "../../services/patients";
+import EntryDetails from '../EntryDetails/EntryDetails';
 
 const PatientDetail = () => {
     const [patients, setPatients] = useState<Patient | null>(null);
@@ -44,23 +45,26 @@ const PatientDetail = () => {
                     {
                         patients.entries.length >= 1 ? (
                             patients.entries.map((value) =>
-                                <div key={value.id}>
-                                    <Typography variant="body1">{value.date} <i>{value.description}</i></Typography>
-                                    <ul>
-                                        {value.diagnosisCodes?.map((item) => {
-                                            const matchDiagnosis = diagnosis.find(dn => dn.code === item);
-
-                                            return matchDiagnosis ? (
-                                                <li key={item}>
-                                                    <Typography>
-                                                        {matchDiagnosis.code} {matchDiagnosis.name}
-                                                    </Typography>
-                                                </li>
-                                            ) : null;
-                                        })}
-                                    </ul>
-                                </div>
+                                <EntryDetails entry={value} />
                             )
+                            // patients.entries.map((value) =>
+                            //     <div key={value.id}>
+                            //         <Typography variant="body1">{value.date} <i>{value.description}</i></Typography>
+                            //         <ul>
+                            //             {value.diagnosisCodes?.map((item) => {
+                            //                 const matchDiagnosis = diagnosis.find(dn => dn.code === item);
+
+                            //                 return matchDiagnosis ? (
+                            //                     <li key={item}>
+                            //                         <Typography>
+                            //                             {matchDiagnosis.code} {matchDiagnosis.name}
+                            //                         </Typography>
+                            //                     </li>
+                            //                 ) : null;
+                            //             })}
+                            //         </ul>
+                            //     </div>
+                            // )
                         ) : (
                             <Typography variant="body1">No entries</Typography>
                         )
