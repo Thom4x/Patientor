@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Alert, Box, TextField, Button, InputLabel, MenuItem } from "@mui/material";
+import { Alert, Box, TextField, Button, InputLabel, MenuItem, OutlinedInput } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-
-import { Entry, EntryWithoutId, HealthCheckRating } from "../../../types";
+import { Input } from '@mui/material';
+import { Entry, EntryWithoutId, Diagnosis, type HealthCheckRating } from "../../../types";
 
 const initialValues = {
     type: 'HealthCheck' as Entry['type'],
@@ -10,7 +10,7 @@ const initialValues = {
     date: '',
     specialist: '',
     diagnosisCodes: [] as string[],
-    healthCheckRating: 0,
+    healthCheckRating: '',
     employerName: '',
     sickLeaveStart: '',
     sickLeaveEnd: '',
@@ -19,15 +19,15 @@ const initialValues = {
 };
 
 
-
 interface Props {
     onSubmit: (values: EntryWithoutId) => void;
     onCancel: () => void;
     error?: string;
     type?: string;
+    codeDiagnosis: Diagnosis[];
 }
 
-const AddEntryForm = ({ onSubmit, onCancel, error, type }: Props) => {
+const AddEntryForm = ({ onSubmit, onCancel, error, type, codeDiagnosis }: Props) => {
     const [values, setValues] = useState(initialValues);
 
     const sendSubmit = (e: React.SyntheticEvent) => {
@@ -37,7 +37,7 @@ const AddEntryForm = ({ onSubmit, onCancel, error, type }: Props) => {
             description: values.description,
             date: values.date,
             specialist: values.specialist,
-            diagnosisCodes: values.diagnosisCodes.map((c) => c.trim()).filter(Boolean),
+            diagnosisCodes: values.diagnosisCodes,
         };
 
         let newEntry: EntryWithoutId;
@@ -84,6 +84,12 @@ const AddEntryForm = ({ onSubmit, onCancel, error, type }: Props) => {
                 </Select>
                 <TextField
                     label='Date'
+                    type='date'
+                    slotProps={{
+                        inputLabel: {
+                            shrink: true,
+                        },
+                    }}
                     fullWidth
                     value={values.date}
                     onChange={({ target }) => setValues({ ...values, date: target.value })}
@@ -101,60 +107,111 @@ const AddEntryForm = ({ onSubmit, onCancel, error, type }: Props) => {
                     onChange={({ target }) => setValues({ ...values, specialist: target.value })}
                 />
                 <TextField
-                    label='Diagnosis Codes (comma separated)'
+                    select
                     fullWidth
-                    value={values.diagnosisCodes.join(', ')}
-                    onChange={({ target }) => setValues({ ...values, diagnosisCodes: target.value.split(',').map(code => code.trim()) })}
-                />
+                    label="Diagnosis Codes"
+                    value={values.diagnosisCodes}
+                    onChange={(e) => {
+                        const { value } = e.target;
+                        setValues((prev) => ({
+                            ...prev,
+                            diagnosisCodes: typeof value === 'string' ? value.split(',') : value,
+                        }));
+                    }}
+                    slotProps={{
+                        inputLabel: { shrink: true },
+                        select: {
+                            multiple: true,
+                            renderValue: (selected) => (selected as string[]).join(', '),
+                        },
+                    }}
+                >
+                    {codeDiagnosis.map((d) => (
+                        <MenuItem key={d.code} value={d.code}>
+                            {d.code} - {d.name}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                {
+                    values.type === "HealthCheck" && (
+                        <div>
+                            <InputLabel id="entry-type-label">Level Risk</InputLabel>
+                            <Select
+                                labelId="entry-type-label"
+                                value={values.healthCheckRating}
+                                label="Level Risk"
+                                onChange={({ target }) => setValues({ ...values, healthCheckRating: target.value })}
+                            >
+                                <MenuItem value={0}>None</MenuItem>
+                                <MenuItem value={1}>Low</MenuItem>
+                                <MenuItem value={2}>Moderate</MenuItem>
+                                <MenuItem value={3}>High</MenuItem>
+                            </Select>
+                        </div>
+                    )
+                }
 
-                {values.type === "HealthCheck" && (
-                    <TextField
-                        label='Health Check Rating'
-                        fullWidth
-                        value={values.healthCheckRating}
-                        onChange={({ target }) => setValues({ ...values, healthCheckRating: Number(target.value) as HealthCheckRating })}
-                    />
-                )}
+                {
+                    values.type === "OccupationalHealthcare" && (
+                        <>
+                            <TextField
+                                label='Employer Name'
+                                fullWidth
+                                value={values.employerName}
+                                onChange={({ target }) => setValues({ ...values, employerName: target.value })}
+                            />
+                            <TextField
+                                type='date'
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                                label='Sick Leave Start Date'
+                                fullWidth
+                                value={values.sickLeaveStart}
+                                onChange={({ target }) => setValues({ ...values, sickLeaveStart: target.value })}
+                            />
+                            <TextField
+                                type='date'
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                                label='Sick Leave End Date'
+                                fullWidth
+                                value={values.sickLeaveEnd}
+                                onChange={({ target }) => setValues({ ...values, sickLeaveEnd: target.value })}
+                            />
+                        </>
+                    )
+                }
 
-                {values.type === "OccupationalHealthcare" && (
-                    <>
-                        <TextField
-                            label='Employer Name'
-                            fullWidth
-                            value={values.employerName}
-                            onChange={({ target }) => setValues({ ...values, employerName: target.value })}
-                        />
-                        <TextField
-                            label='Sick Leave Start Date'
-                            fullWidth
-                            value={values.sickLeaveStart}
-                            onChange={({ target }) => setValues({ ...values, sickLeaveStart: target.value })}
-                        />
-                        <TextField
-                            label='Sick Leave End Date'
-                            fullWidth
-                            value={values.sickLeaveEnd}
-                            onChange={({ target }) => setValues({ ...values, sickLeaveEnd: target.value })}
-                        />
-                    </>
-                )}
-
-                {values.type === "Hospital" && (
-                    <>
-                        <TextField
-                            label='Discharge Date'
-                            fullWidth
-                            value={values.dischargeDate}
-                            onChange={({ target }) => setValues({ ...values, dischargeDate: target.value })}
-                        />
-                        <TextField
-                            label='Criteria'
-                            fullWidth
-                            value={values.dischargeCriteria}
-                            onChange={({ target }) => setValues({ ...values, dischargeCriteria: target.value })}
-                        />
-                    </>
-                )}
+                {
+                    values.type === "Hospital" && (
+                        <>
+                            <TextField
+                                type='date'
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                                label='Discharge Date'
+                                fullWidth
+                                value={values.dischargeDate}
+                                onChange={({ target }) => setValues({ ...values, dischargeDate: target.value })}
+                            />
+                            <TextField
+                                label='Criteria'
+                                fullWidth
+                                value={values.dischargeCriteria}
+                                onChange={({ target }) => setValues({ ...values, dischargeCriteria: target.value })}
+                            />
+                        </>
+                    )
+                }
 
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <Button type="submit" variant="contained">
@@ -164,8 +221,8 @@ const AddEntryForm = ({ onSubmit, onCancel, error, type }: Props) => {
                         Cancel
                     </Button>
                 </div>
-            </form>
-        </Box>
+            </form >
+        </Box >
     );
 };
 

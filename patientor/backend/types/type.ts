@@ -9,7 +9,7 @@ export const diagnosisSchema = z.object({
 export type Diagnosis = z.infer<typeof diagnosisSchema>;
 
 export const BaseEntrySchema = z.object({
-    id: z.uuid(),
+    id: z.string(),
     description: z.string(),
     date: z.iso.date(),
     specialist: z.string(),

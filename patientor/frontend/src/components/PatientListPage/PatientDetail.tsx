@@ -21,8 +21,6 @@ const PatientDetail = () => {
         error: ''
     });
 
-    console.log("error", error);
-
     const openModal = (): void => setIsFormOpen(true);
 
     const closeModal = (): void => {
@@ -99,6 +97,7 @@ const PatientDetail = () => {
                     {isFormOpen ?
                         <div>
                             <AddEntryForm
+                                codeDiagnosis={diagnosis}
                                 onSubmit={submitNewEntry}
                                 onCancel={closeModal}
                                 error={error.error}
