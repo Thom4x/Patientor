@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Diagnosis, Patient, UserId, EntryWithoutId } from '../../types';
+import { Diagnosis, Patient, UserId, EntryWithoutId, MessageError } from '../../types';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import { Box, Button, Typography } from '@mui/material';
@@ -16,13 +16,21 @@ const PatientDetail = () => {
     const [diagnosis, setDiagnosis] = useState<Diagnosis[]>([]);
 
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-    const [error, setError] = useState<string>();
+    const [error, setError] = useState<MessageError>({
+        type: 'success',
+        error: ''
+    });
+
+    console.log("error", error);
 
     const openModal = (): void => setIsFormOpen(true);
 
     const closeModal = (): void => {
         setIsFormOpen(false);
-        setError(undefined);
+        setError({
+            type: 'success',
+            error: ''
+        });
     };
     const { id } = useParams<{ id: UserId }>();
 
@@ -50,11 +58,18 @@ const PatientDetail = () => {
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
                 const errorData = error.response?.data;
-                if (typeof errorData === "string") {
-                    const message = errorData.replace('Something went wrong. Error: ', '');
-                    console.error(message);
-                } else {
-                    console.error("Failed to add new entry", error);
+                if (typeof errorData === 'object') {
+                    setError({
+                        error: errorData.error,
+                        type: 'error'
+                    });
+                    setTimeout(() => {
+                        setError({
+                            error: '',
+                            type: 'success'
+                        });
+                    }, 2000);
+
                 }
             } else {
                 console.error("Unknown error occurred", error);
@@ -86,6 +101,8 @@ const PatientDetail = () => {
                             <AddEntryForm
                                 onSubmit={submitNewEntry}
                                 onCancel={closeModal}
+                                error={error.error}
+                                type={error.type}
                             />
 
                         </div>

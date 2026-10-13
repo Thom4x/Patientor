@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { Box, TextField, Button } from "@mui/material";
 import { EntryWithoutId, HealthCheckRating } from "../../../types";
+import Message from "../../ErrorModal/Message";
 
 interface Props {
     onSubmit: (values: EntryWithoutId) => void;
     onCancel: () => void;
+    error: string;
+    type: string;
 }
 
-const Ensayis = ({ onSubmit, onCancel }: Props) => {
+const Ensayis = ({ onSubmit, onCancel, error, type }: Props) => {
     const [description, setDescriptions] = useState('');
     const [date, setDate] = useState('');
     const [specialist, setSpecialist] = useState('');
@@ -25,13 +28,15 @@ const Ensayis = ({ onSubmit, onCancel }: Props) => {
             healthCheckRating: healthCheckRating
         };
         onSubmit(newEntry);
-        onCancel();
+
     };
 
 
     return (
         <div>
             <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2, marginTop: 2, border: '1px solid black', borderRadius: 2 }}>
+                {error && <Message error={error} type={type} />}
+                <br />
                 <form onSubmit={HandleForm} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <TextField
                         label='Date'

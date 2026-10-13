@@ -40,7 +40,7 @@ const create = async (object: PatientFormValues) => {
   return data.entries;
 };
 
-const createEntry = async (id: UserId, object: EntryWithoutId) => {
+const createEntry = async (id: UserId, object: EntryWithoutId): Promise<Entry> => {
   const { data } = await axios.post<Entry>(
     `${apiBaseUrl}/patients/${id}/entries`,
     object

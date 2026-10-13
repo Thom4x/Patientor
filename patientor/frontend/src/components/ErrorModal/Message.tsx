@@ -1,18 +1,15 @@
-import React from 'react'
+import { MessageError } from '../../types';
+import { Alert } from '@mui/material';
 
-interface Props {
-    error: string,
-    type: string
-}
+const Message = ({ error, type }: MessageError) => {
 
-const Message = ({ error, type }: Props) => {
-    if (error === null) return;
-
-    const classError = type === 'success' ? 'success' : 'error';
+    if (!error) {
+        return null;
+    }
 
     return (
-        <div className={classError}>
-
+        <div>
+            <Alert severity={type === 'success' ? 'success' : 'error'}>{error}</Alert>
         </div>
     );
 };
