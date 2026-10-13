@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { PatientEntrySchema, EntrySchema } from '../types/type.ts';
+import { PatientEntrySchema, EntryWithoutIdSchema } from '../types/type.ts';
 import { z } from 'zod';
 
 
@@ -14,7 +14,7 @@ export const newPatientValidator = (req: Request, _res: Response, next: NextFunc
 
 export const newEntriesValidator = (req: Request, _res: Response, next: NextFunction) => {
     try {
-        req.body = EntrySchema.parse(req.body);
+        req.body = EntryWithoutIdSchema.parse(req.body);
         next();
     } catch (error: unknown) {
         next(error);

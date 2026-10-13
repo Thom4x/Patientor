@@ -1,31 +1,68 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Diagnosis, Patient, UserId } from '../../types';
-
+import { Diagnosis, Patient, UserId, EntryWithoutId } from '../../types';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import patientService from "../../services/patients";
 import EntryDetails from '../EntryDetails/EntryDetails';
+import AddEntryForm from '../EntryDetails/AddEntryModal/AddEntryForm';
 
 const PatientDetail = () => {
-    const [patients, setPatients] = useState<Patient | null>(null);
+    const [patients, setPatients] = useState<Patient>();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [diagnosis, setDiagnosis] = useState<Diagnosis[]>([]);
+
+    const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+    const [error, setError] = useState<string>();
+
+    const openModal = (): void => setIsFormOpen(true);
+
+    const closeModal = (): void => {
+        setIsFormOpen(false);
+        setError(undefined);
+    };
     const { id } = useParams<{ id: UserId }>();
 
     useEffect(() => {
-        const fetchPatientList = async () => {
-            if (id) {
-                const patient = await patientService.getById(id);
-                setPatients(patient);
+        const fetchPatientData = async () => {
+            try {
+                if (id) {
+                    const patient = await patientService.getById(id);
+                    setPatients(patient);
+                }
+                const diagnosisList = await patientService.getDiagnosis();
+                setDiagnosis(diagnosisList);
+            } catch (error) {
+                console.error("Error fetching patient data:", error);
             }
-            const diagnosisList = await patientService.getDiagnosis();
-            setDiagnosis(diagnosisList);
         };
-        void fetchPatientList();
+        void fetchPatientData();
     }, [id]);
+
+    const submitNewEntry = async (values: EntryWithoutId) => {
+        if (!id) return;
+        try {
+            const entry = await patientService.createEntry(id, values);
+            setPatients(patients ? { ...patients, entries: [...patients.entries, entry] } : undefined);
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                const errorData = error.response?.data;
+                if (typeof errorData === "string") {
+                    const message = errorData.replace('Something went wrong. Error: ', '');
+                    console.error(message);
+                } else {
+                    console.error("Failed to add new entry", error);
+                }
+            } else {
+                console.error("Unknown error occurred", error);
+            }
+        }
+    };
+
+
 
     return (
         <div>
@@ -43,29 +80,26 @@ const PatientDetail = () => {
                     <Typography variant="body1">date of birth: {patients.dateOfBirth}</Typography>
                     <br />
                     <Typography variant="h6">entries</Typography>
+                    <Button variant='contained' onClick={openModal}>Open</Button>
+                    {isFormOpen ?
+                        <div>
+                            <AddEntryForm
+                                onSubmit={submitNewEntry}
+                                onCancel={closeModal}
+                            />
+
+                        </div>
+
+                        :
+                        null
+                    }
+
                     {
                         patients.entries.length >= 1 ? (
                             patients.entries.map((value) =>
-                                <EntryDetails entry={value} />
+                                <EntryDetails key={value.id} entry={value} />
                             )
-                            // patients.entries.map((value) =>
-                            //     <div key={value.id}>
-                            //         <Typography variant="body1">{value.date} <i>{value.description}</i></Typography>
-                            //         <ul>
-                            //             {value.diagnosisCodes?.map((item) => {
-                            //                 const matchDiagnosis = diagnosis.find(dn => dn.code === item);
 
-                            //                 return matchDiagnosis ? (
-                            //                     <li key={item}>
-                            //                         <Typography>
-                            //                             {matchDiagnosis.code} {matchDiagnosis.name}
-                            //                         </Typography>
-                            //                     </li>
-                            //                 ) : null;
-                            //             })}
-                            //         </ul>
-                            //     </div>
-                            // )
                         ) : (
                             <Typography variant="body1">No entries</Typography>
                         )

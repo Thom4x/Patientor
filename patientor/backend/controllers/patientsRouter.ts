@@ -1,6 +1,6 @@
 import express, { type Request, type Response } from 'express';
 import getService from '../services/patientService.ts';
-import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry, EntryWithoutId } from '../types/type.ts';
+import type { Diagnosis, NonSensitivePatient, Patient, PatientEntry, EntryWithoutId, Entry } from '../types/type.ts';
 import { newEntriesValidator, newPatientValidator } from '../utils/middleware.ts';
 import { z } from 'zod';
 
@@ -27,7 +27,7 @@ patientsRouter.get('/patients/:id', (req: Request, res: Response<Patient | { err
     }
 });
 
-patientsRouter.post('/patients/:id/entries', newEntriesValidator, (req: Request<unknown, unknown, EntryWithoutId>, res: Response<Patient | { error: string }>) => {
+patientsRouter.post('/patients/:id/entries', newEntriesValidator, (req: Request<unknown, unknown, EntryWithoutId>, res: Response<Entry>) => {
     const { id } = idSchema.parse(req.params);
     const addedPatient = getService.postByIdEntryes(id, req.body);
     res.send(addedPatient);

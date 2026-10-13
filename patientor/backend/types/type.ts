@@ -9,6 +9,7 @@ export const diagnosisSchema = z.object({
 export type Diagnosis = z.infer<typeof diagnosisSchema>;
 
 export const BaseEntrySchema = z.object({
+    id: z.uuid(),
     description: z.string(),
     date: z.iso.date(),
     specialist: z.string(),
@@ -54,24 +55,25 @@ const HospitalEntry =
         })
     });
 
-export const EntrySchema = z.discriminatedUnion('type', [
+
+
+export const EntryWithoutIdSchema = z.discriminatedUnion('type', [
+    HealthCheckEntry.omit({ id: true }),
+    OccupationalHealthcareEntry.omit({ id: true }),
+    HospitalEntry.omit({ id: true })
+]);
+
+// Inferimos el type completo : Entry sin id
+export type EntryWithoutId = z.infer<typeof EntryWithoutIdSchema>;
+
+// Inferimos el type completo : Entry con id
+export const EntrySchemaById = z.discriminatedUnion('type', [
     HealthCheckEntry,
     OccupationalHealthcareEntry,
     HospitalEntry
 ]);
 
-// Inferimos el type completo : Entry con id
-export type Entry = z.infer<typeof EntrySchema>;
-
-// Inferimos el type completo : Entry sin id
-export const EntryWithoutIdSchema = EntrySchema;
-export type EntryWithoutId = z.infer<typeof EntryWithoutIdSchema>;
-
-export const EntrySchemaById = z.intersection(
-    EntrySchema,
-    z.object({ id: z.string() })
-);
-
+export type Entry = z.infer<typeof EntrySchemaById>;
 
 
 // ---------------------------------------------------
