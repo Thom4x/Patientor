@@ -60,7 +60,9 @@ const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiag
             };
         }
         onSubmit(newEntry);
-        onCancel();
+        if (messageType === 'success') {
+            onCancel();
+        }
     };
 
     const handleChange = (event: SelectChangeEvent) => {
