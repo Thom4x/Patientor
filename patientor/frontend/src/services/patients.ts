@@ -37,7 +37,7 @@ const create = async (object: PatientFormValues) => {
     object
   );
 
-  return data.entries;
+  return data;
 };
 
 const createEntry = async (id: UserId, object: EntryWithoutId): Promise<Entry> => {

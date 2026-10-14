@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Box, TextField, Button, InputLabel, MenuItem } from "@mui/material";
+import { Box, TextField, Button, InputLabel, MenuItem } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Entry, EntryWithoutId, Diagnosis, type HealthCheckRating } from "../../../types";
 import Message from "../../ErrorModal/Message";
@@ -71,7 +71,7 @@ const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiag
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2, mt: 2, border: '1px solid black', borderRadius: 2 }}>
             <Message message={messageType} severity={alertSeverity} />
             <form onSubmit={sendSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <InputLabel id="entry-type-label">Entry Type</InputLabel>
+                <InputLabel id="entry-type-label">New Entry Type</InputLabel>
                 <Select
                     labelId="entry-type-label"
                     value={values.type}
@@ -140,7 +140,7 @@ const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiag
                                 labelId="entry-type-label"
                                 value={values.healthCheckRating}
                                 label="Level Risk"
-                                onChange={({ target }) => setValues({ ...values, healthCheckRating: target.value })}
+                                onChange={({ target }) => setValues({ ...values, healthCheckRating: Number(target.value) })}
                             >
                                 <MenuItem value={0}>None</MenuItem>
                                 <MenuItem value={1}>Low</MenuItem>
@@ -215,7 +215,7 @@ const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiag
 
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <Button type="submit" variant="contained">
-                        Add Entry
+                        Add
                     </Button>
                     <Button onClick={onCancel} variant="outlined">
                         Cancel

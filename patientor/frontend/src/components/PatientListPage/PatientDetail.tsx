@@ -93,7 +93,9 @@ const PatientDetail = () => {
                     <Typography variant="body1">date of birth: {patients.dateOfBirth}</Typography>
                     <br />
                     <Typography variant="h6">entries</Typography>
-                    <Button variant='contained' onClick={openModal}>Open</Button>
+                    {!isFormOpen ? (
+                        <Button variant='contained' onClick={openModal}>Add New Entry</Button>
+                    ) : null}
                     {isFormOpen ?
                         <div>
                             <AddEntryForm
@@ -111,7 +113,7 @@ const PatientDetail = () => {
                     }
 
                     {
-                        patients.entries.length >= 1 ? (
+                        patients.entries?.length >= 1 ? (
                             patients.entries.map((value) =>
                                 <EntryDetails key={value.id} entry={value} />
                             )
