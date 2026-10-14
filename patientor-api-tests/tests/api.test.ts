@@ -74,7 +74,7 @@ test.describe('Patientor API', () => {
         gender: 'male',
         occupation: 'Developer',
         entries: [{
-          id: 'entry1',
+          id: '1',
           date: '2023-01-01',
           type: 'HealthCheck',
           specialist: 'Dr. Smith',

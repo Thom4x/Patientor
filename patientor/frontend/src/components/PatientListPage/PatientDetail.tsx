@@ -17,8 +17,8 @@ const PatientDetail = () => {
 
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
     const [error, setError] = useState<MessageError>({
-        type: 'success',
-        error: ''
+        severity: 'success',
+        message: ''
     });
 
     const openModal = (): void => setIsFormOpen(true);
@@ -26,8 +26,8 @@ const PatientDetail = () => {
     const closeModal = (): void => {
         setIsFormOpen(false);
         setError({
-            type: 'success',
-            error: ''
+            severity: 'success',
+            message: ''
         });
     };
     const { id } = useParams<{ id: UserId }>();
@@ -58,13 +58,13 @@ const PatientDetail = () => {
                 const errorData = error.response?.data;
                 if (typeof errorData === 'object') {
                     setError({
-                        error: errorData.error,
-                        type: 'error'
+                        message: errorData.error,
+                        severity: 'error'
                     });
                     setTimeout(() => {
                         setError({
-                            error: '',
-                            type: 'success'
+                            message: '',
+                            severity: 'success'
                         });
                     }, 2000);
 
@@ -100,8 +100,8 @@ const PatientDetail = () => {
                                 codeDiagnosis={diagnosis}
                                 onSubmit={submitNewEntry}
                                 onCancel={closeModal}
-                                error={error.error}
-                                type={error.type}
+                                messageType={error.message}
+                                alertSeverity={error.severity}
                             />
 
                         </div>

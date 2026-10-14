@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Alert, Box, TextField, Button, InputLabel, MenuItem, OutlinedInput } from "@mui/material";
+import { Alert, Box, TextField, Button, InputLabel, MenuItem } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Input } from '@mui/material';
 import { Entry, EntryWithoutId, Diagnosis, type HealthCheckRating } from "../../../types";
+import Message from "../../ErrorModal/Message";
 
 const initialValues = {
     type: 'HealthCheck' as Entry['type'],
@@ -10,7 +10,7 @@ const initialValues = {
     date: '',
     specialist: '',
     diagnosisCodes: [] as string[],
-    healthCheckRating: '',
+    healthCheckRating: 0,
     employerName: '',
     sickLeaveStart: '',
     sickLeaveEnd: '',
@@ -22,12 +22,12 @@ const initialValues = {
 interface Props {
     onSubmit: (values: EntryWithoutId) => void;
     onCancel: () => void;
-    error?: string;
-    type?: string;
+    messageType: string;
+    alertSeverity: string;
     codeDiagnosis: Diagnosis[];
 }
 
-const AddEntryForm = ({ onSubmit, onCancel, error, type, codeDiagnosis }: Props) => {
+const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiagnosis }: Props) => {
     const [values, setValues] = useState(initialValues);
 
     const sendSubmit = (e: React.SyntheticEvent) => {
@@ -42,13 +42,13 @@ const AddEntryForm = ({ onSubmit, onCancel, error, type, codeDiagnosis }: Props)
 
         let newEntry: EntryWithoutId;
         if (values.type === 'HealthCheck') {
-            newEntry = { ...base, type: 'HealthCheck', healthCheckRating: values.healthCheckRating as HealthCheckRating };
+            newEntry = { ...base, type: 'HealthCheck', healthCheckRating: Number(values.healthCheckRating) as HealthCheckRating };
         } else if (values.type === 'OccupationalHealthcare') {
             newEntry = {
                 ...base,
                 type: 'OccupationalHealthcare',
                 employerName: values.employerName,
-                sickLeave: values.sickLeaveStart
+                sickLeave: (values.sickLeaveStart && values.sickLeaveEnd)
                     ? { startDate: values.sickLeaveStart, endDate: values.sickLeaveEnd }
                     : undefined,
             };
@@ -69,7 +69,7 @@ const AddEntryForm = ({ onSubmit, onCancel, error, type, codeDiagnosis }: Props)
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2, mt: 2, border: '1px solid black', borderRadius: 2 }}>
-            {error && <Alert severity={type === 'success' ? 'success' : 'error'}>{error}</Alert>}
+            <Message message={messageType} severity={alertSeverity} />
             <form onSubmit={sendSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <InputLabel id="entry-type-label">Entry Type</InputLabel>
                 <Select
