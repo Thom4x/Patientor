@@ -30,13 +30,14 @@ const PatientDetail = () => {
             message: ''
         });
     };
-    const { id } = useParams<{ id: UserId }>();
+    const { id } = useParams<{ id: string }>();
+    const patientId = id as unknown as UserId;
 
     useEffect(() => {
         const fetchPatientData = async () => {
             try {
                 if (id) {
-                    const patient = await patientService.getById(id);
+                    const patient = await patientService.getById(patientId);
                     setPatients(patient);
                 }
                 const diagnosisList = await patientService.getDiagnosis();
@@ -51,7 +52,7 @@ const PatientDetail = () => {
     const submitNewEntry = async (values: EntryWithoutId) => {
         if (!id) return;
         try {
-            const entry = await patientService.createEntry(id, values);
+            const entry = await patientService.createEntry(patientId, values);
             setPatients(patients ? { ...patients, entries: [...patients.entries, entry] } : undefined);
         } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
