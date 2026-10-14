@@ -10,6 +10,7 @@ import patientService from "../../services/patients";
 import EntryDetails from '../EntryDetails/EntryDetails';
 import AddEntryForm from '../EntryDetails/AddEntryModal/AddEntryForm';
 
+
 const PatientDetail = () => {
     const [patients, setPatients] = useState<Patient>();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,8 +77,6 @@ const PatientDetail = () => {
         }
     };
 
-
-
     return (
         <div>
             {patients ? (
@@ -100,7 +99,7 @@ const PatientDetail = () => {
                     {isFormOpen ?
                         <div>
                             <AddEntryForm
-                                codeDiagnosis={diagnosis}
+                                diagnoses={diagnosis}
                                 onSubmit={submitNewEntry}
                                 onCancel={closeModal}
                                 messageType={error.message}

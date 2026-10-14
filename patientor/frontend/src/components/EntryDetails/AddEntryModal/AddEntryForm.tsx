@@ -1,63 +1,75 @@
-import React, { useState } from "react";
-import { Box, TextField, Button, InputLabel, MenuItem } from "@mui/material";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Entry, EntryWithoutId, Diagnosis, type HealthCheckRating } from "../../../types";
+import React, { useState } from 'react';
+import { Box, TextField, Button, MenuItem, InputLabel, Select, SelectChangeEvent } from '@mui/material';
+import { EntryWithoutId, Diagnosis, HealthCheckRating } from '../../../types';
+import { HealthCheckFields, OccupationalFields, HospitalFields } from './TypeEntryForm';
+
 import Message from "../../ErrorModal/Message";
 
-const initialValues = {
-    type: 'HealthCheck' as Entry['type'],
-    description: '',
-    date: '',
-    specialist: '',
-    diagnosisCodes: [] as string[],
-    healthCheckRating: 0,
-    employerName: '',
-    sickLeaveStart: '',
-    sickLeaveEnd: '',
-    dischargeDate: '',
-    dischargeCriteria: '',
-};
 
-
-interface Props {
+interface AddEntryFormProps {
     onSubmit: (values: EntryWithoutId) => void;
     onCancel: () => void;
+    diagnoses: Diagnosis[];
     messageType: string;
     alertSeverity: string;
-    codeDiagnosis: Diagnosis[];
 }
 
-const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiagnosis }: Props) => {
-    const [values, setValues] = useState(initialValues);
+const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, diagnoses }: AddEntryFormProps) => {
+    const [type, setType] = useState<EntryWithoutId['type']>('HealthCheck');
+    const [description, setDescription] = useState('');
+    const [date, setDate] = useState('');
+    const [specialist, setSpecialist] = useState('');
+    const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+    // Variants State
+    const [healthCheckRating, setHealthCheckRating] = useState<HealthCheckRating>(0);
+    const [employerName, setEmployerName] = useState('');
+    const [sickLeaveStart, setSickLeaveStart] = useState('');
+    const [sickLeaveEnd, setSickLeaveEnd] = useState('');
+    const [dischargeDate, setDischargeDate] = useState('');
+    const [dischargeCriteria, setDischargeCriteria] = useState('');
 
+    console.log("diagnosis seleccionado", diagnosisCodes);
     const sendSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
 
-        const base = {
-            description: values.description,
-            date: values.date,
-            specialist: values.specialist,
-            diagnosisCodes: values.diagnosisCodes,
+        const baseValues = {
+            description: description,
+            date: date,
+            specialist: specialist,
+            diagnosisCodes: diagnosisCodes,
         };
 
         let newEntry: EntryWithoutId;
-        if (values.type === 'HealthCheck') {
-            newEntry = { ...base, type: 'HealthCheck', healthCheckRating: Number(values.healthCheckRating) as HealthCheckRating };
-        } else if (values.type === 'OccupationalHealthcare') {
-            newEntry = {
-                ...base,
-                type: 'OccupationalHealthcare',
-                employerName: values.employerName,
-                sickLeave: (values.sickLeaveStart && values.sickLeaveEnd)
-                    ? { startDate: values.sickLeaveStart, endDate: values.sickLeaveEnd }
-                    : undefined,
-            };
-        } else {
-            newEntry = {
-                ...base,
-                type: 'Hospital',
-                discharge: { date: values.dischargeDate, criteria: values.dischargeCriteria },
-            };
+        switch (type) {
+            case 'HealthCheck':
+                newEntry = {
+                    ...baseValues,
+                    type: 'HealthCheck',
+                    healthCheckRating,
+                };
+                break;
+            case 'OccupationalHealthcare':
+                newEntry = {
+                    ...baseValues,
+                    type: 'OccupationalHealthcare',
+                    employerName,
+                    sickLeave: sickLeaveStart && sickLeaveEnd
+                        ? { startDate: sickLeaveStart, endDate: sickLeaveEnd }
+                        : undefined,
+                };
+                break;
+            case 'Hospital':
+                newEntry = {
+                    ...baseValues,
+                    type: 'Hospital',
+                    discharge: {
+                        date: dischargeDate,
+                        criteria: dischargeCriteria,
+                    },
+                };
+                break;
+            default:
+                return;
         }
         onSubmit(newEntry);
         if (messageType === 'success') {
@@ -65,8 +77,8 @@ const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiag
         }
     };
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setValues({ ...values, type: event.target.value as Entry['type'] });
+    const handleChange = (event: SelectChangeEvent<string>) => {
+        setType(event.target.value as EntryWithoutId['type']);
     };
 
     return (
@@ -76,7 +88,7 @@ const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiag
                 <InputLabel id="entry-type-label">New Entry Type</InputLabel>
                 <Select
                     labelId="entry-type-label"
-                    value={values.type}
+                    value={type}
                     label="Type"
                     onChange={handleChange}
                 >
@@ -93,127 +105,74 @@ const AddEntryForm = ({ onSubmit, onCancel, messageType, alertSeverity, codeDiag
                         },
                     }}
                     fullWidth
-                    value={values.date}
-                    onChange={({ target }) => setValues({ ...values, date: target.value })}
+                    value={date}
+                    onChange={({ target }) => setDate(target.value)}
                 />
                 <TextField
                     label='Description'
                     fullWidth
-                    value={values.description}
-                    onChange={({ target }) => setValues({ ...values, description: target.value })}
+                    value={description}
+                    onChange={({ target }) => setDescription(target.value)}
                 />
                 <TextField
                     label='Specialist'
                     fullWidth
-                    value={values.specialist}
-                    onChange={({ target }) => setValues({ ...values, specialist: target.value })}
+                    value={specialist}
+                    onChange={({ target }) => setSpecialist(target.value)}
                 />
-                <TextField
-                    select
-                    fullWidth
+                <InputLabel id="diagnosis-codes-label">Diagnosis Codes</InputLabel>
+                <Select
+                    labelId="diagnosis-codes-label"
+                    multiple
+                    value={Array.isArray(diagnosisCodes) ? diagnosisCodes : []}
                     label="Diagnosis Codes"
-                    value={values.diagnosisCodes}
                     onChange={(e) => {
                         const { value } = e.target;
-                        setValues((prev) => ({
-                            ...prev,
-                            diagnosisCodes: typeof value === 'string' ? value.split(',') : value,
-                        }));
+                        const newValues = typeof value === 'string' ? value.split(',') : value;
+                        setDiagnosisCodes(newValues as string[]);
                     }}
-                    slotProps={{
-                        inputLabel: { shrink: true },
-                        select: {
-                            multiple: true,
-                            renderValue: (selected) => (selected as string[]).join(', '),
-                        },
-                    }}
+                    renderValue={(selected) => (selected as string[]).join(', ')}
                 >
-                    {codeDiagnosis.map((d) => (
+                    {diagnoses.map((d) => (
                         <MenuItem key={d.code} value={d.code}>
                             {d.code} - {d.name}
                         </MenuItem>
                     ))}
-                </TextField>
+                </Select>
                 {
-                    values.type === "HealthCheck" && (
-                        <div>
-                            <InputLabel id="entry-type-label">Level Risk</InputLabel>
-                            <Select
-                                labelId="entry-type-label"
-                                value={values.healthCheckRating}
-                                label="Level Risk"
-                                onChange={({ target }) => setValues({ ...values, healthCheckRating: Number(target.value) })}
-                            >
-                                <MenuItem value={0}>None</MenuItem>
-                                <MenuItem value={1}>Low</MenuItem>
-                                <MenuItem value={2}>Moderate</MenuItem>
-                                <MenuItem value={3}>High</MenuItem>
-                            </Select>
-                        </div>
-                    )
-                }
+                    type === "HealthCheck" && (
+                        <HealthCheckFields
+                            healthCheckRating={healthCheckRating}
+                            onChange={(rating) => setHealthCheckRating(rating)}
+                        />
+                    )}
+                {
+                    type === "OccupationalHealthcare" && (
+                        <OccupationalFields
+                            employerName={employerName}
+                            sickLeaveStart={sickLeaveStart}
+                            sickLeaveEnd={sickLeaveEnd}
+                            onChange={
+                                (field, value) => {
+                                    if (field === 'employerName') setEmployerName(value);
+                                    if (field === 'sickLeaveStart') setSickLeaveStart(value);
+                                    if (field === 'sickLeaveEnd') setSickLeaveEnd(value);
+                                }}
 
+                        />
+                    )}
                 {
-                    values.type === "OccupationalHealthcare" && (
-                        <>
-                            <TextField
-                                label='Employer Name'
-                                fullWidth
-                                value={values.employerName}
-                                onChange={({ target }) => setValues({ ...values, employerName: target.value })}
-                            />
-                            <TextField
-                                type='date'
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
+                    type === "Hospital" && (
+                        <HospitalFields
+                            dischargeCriteria={dischargeCriteria}
+                            dischargeDate={dischargeDate}
+                            onChange={
+                                (field, value) => {
+                                    if (field === "dischargeCriteria") setDischargeCriteria(value);
+                                    if (field === "dischargeDate") setDischargeDate(value);
                                 }}
-                                label='Sick Leave Start Date'
-                                fullWidth
-                                value={values.sickLeaveStart}
-                                onChange={({ target }) => setValues({ ...values, sickLeaveStart: target.value })}
-                            />
-                            <TextField
-                                type='date'
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                }}
-                                label='Sick Leave End Date'
-                                fullWidth
-                                value={values.sickLeaveEnd}
-                                onChange={({ target }) => setValues({ ...values, sickLeaveEnd: target.value })}
-                            />
-                        </>
-                    )
-                }
-
-                {
-                    values.type === "Hospital" && (
-                        <>
-                            <TextField
-                                type='date'
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                }}
-                                label='Discharge Date'
-                                fullWidth
-                                value={values.dischargeDate}
-                                onChange={({ target }) => setValues({ ...values, dischargeDate: target.value })}
-                            />
-                            <TextField
-                                label='Criteria'
-                                fullWidth
-                                value={values.dischargeCriteria}
-                                onChange={({ target }) => setValues({ ...values, dischargeCriteria: target.value })}
-                            />
-                        </>
-                    )
-                }
+                        />
+                    )}
 
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <Button type="submit" variant="contained">

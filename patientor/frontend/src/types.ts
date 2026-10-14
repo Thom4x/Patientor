@@ -8,6 +8,8 @@ export interface Diagnosis {
   latin?: string;
 }
 
+
+
 export interface BaseEntry {
   id: string;
   description: string;
@@ -79,3 +81,9 @@ export interface MessageError {
   message: string,
   severity: string
 }
+
+// type EsNumero<T> = T extends number ? true : false;
+
+// function esNumero<T>(valor: T): EsNumero<T> {
+//   return (typeof valor === "number") as EsNumero<T>;
+// };
