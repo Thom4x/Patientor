@@ -13,7 +13,6 @@ import AddEntryForm from '../EntryDetails/AddEntryModal/AddEntryForm';
 
 const PatientDetail = () => {
     const [patients, setPatients] = useState<Patient>();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [diagnosis, setDiagnosis] = useState<Diagnosis[]>([]);
 
     const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
@@ -48,6 +47,7 @@ const PatientDetail = () => {
             }
         };
         void fetchPatientData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     const submitNewEntry = async (values: EntryWithoutId) => {

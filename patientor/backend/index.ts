@@ -13,8 +13,11 @@ app.use('/api', PingRouter);
 app.use('/api', patientsRouter);
 app.use(errorMiddleware);
 
-const PORT = 3001;
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('dist'));
+}
 
+const PORT = 3001;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
