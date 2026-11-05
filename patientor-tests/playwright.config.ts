@@ -1,10 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
-import { resolve } from 'node:path';
 
 const isCI = Boolean(
   (globalThis as { process?: { env?: { CI?: string } } }).process?.env?.CI,
 );
-const projectDir = resolve(process.cwd(), '..', 'patientor');
 
 export default defineConfig({
   testDir: './tests',
