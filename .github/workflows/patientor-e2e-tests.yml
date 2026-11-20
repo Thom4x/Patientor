@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main, master ]
 
+concurrency:
+  group: playwright-port-3001
+  cancel-in-progress: false
+
 jobs:
   test:
     runs-on: ubuntu-latest
