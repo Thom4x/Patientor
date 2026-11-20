@@ -1,2 +1,2 @@
-export const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+export const apiBaseUrl = 'http://localhost:3001/api';
 // Proxy Enabled
